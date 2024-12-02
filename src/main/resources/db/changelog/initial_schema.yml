@@ -1,0 +1,61 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: Eduard Heimbuch
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: email
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: hashed_password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: enabled
+                  type: bool
+                  constraints:
+                    nullable: false
+
+        - createTable:
+              tableName: tokens
+              columns:
+                - column:
+                    name: id
+                    type: BIGINT
+                    autoIncrement: true
+                    constraints:
+                      primaryKey: true
+                - column:
+                    name: token
+                    type: VARCHAR(255)
+                    constraints:
+                      primaryKey: true
+                      nullable: false
+                - column:
+                    name: expires
+                    type: TIMESTAMP
+                    constraints:
+                      nullable: false
+                - column:
+                    name: email
+                    type: VARCHAR(255)
+                    constraints:
+                      nullable: false
+                - column:
+                    name: type
+                    type: SMALLINT
+                    constraints:
+                      nullable: false

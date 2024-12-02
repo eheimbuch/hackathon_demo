@@ -1,0 +1,25 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: quickstart-postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: quickstart_user
+      POSTGRES_PASSWORD: quickstart_pw
+      POSTGRES_DB: quickstart
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.1
+    container_name: mailhog-quickstart
+    restart: always
+    ports:
+      - "8025:8025"  # Web UI
+      - "1025:1025"  # SMTP server
+
+volumes:
+  postgres_data:

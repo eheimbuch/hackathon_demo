@@ -1,0 +1,48 @@
+spring:
+  application:
+    name: quickstart
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: quickstart-demo@quickstart.de
+    password: quickstart-pw
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enabled: true
+    default-encoding: UTF-8
+  datasource:
+    url: jdbc:postgresql://localhost:5432/quickstart
+    username: quickstart_user
+    password: quickstart_pw
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      connection-timeout: 45000 # 45 seconds
+      idle-timeout: 240000 # 4 minutes
+      max-lifetime: 300000 # 5 minutes
+      auto-commit: false
+
+  jpa:
+    hibernate:
+      #      During development use 'update' and for production change this to 'validate' or 'none':
+      #      https://hatchjs.com/spring-jpa-hibernate-ddl-auto/
+      ddl-auto: update
+    show-sql: true
+    open-in-view: true
+    properties:
+      hibernate:
+        transaction:
+          jta:
+            platform: org.hibernate.service.jta.platform.internal.JakartaJtaPlatform
+
+  liquibase:
+    enabled: true
+    change-log: classpath:/db/changelog/initial_schema.yml
+
+logging:
+  level:
+    root: debug
+    org.hibernate: debug
