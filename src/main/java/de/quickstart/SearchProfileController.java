@@ -2,6 +2,7 @@ package de.quickstart;
 
 import de.quickstart.models.Player;
 import de.quickstart.models.SearchProfile;
+import de.quickstart.models.Team;
 import de.quickstart.repos.PlayerRepository;
 import de.quickstart.repos.SearchProfileRepository;
 import jakarta.websocket.server.PathParam;
@@ -58,14 +59,15 @@ public class SearchProfileController {
     }
 
     @GetMapping("{search_profile_id}/players")
-    public List<PlayerControler.PlayerVO> getShortList(@PathVariable("search_profile_id") Long searchProfileId) {
+    public List<ShortListPlayerVo> getShortList(@PathVariable("search_profile_id") Long searchProfileId) {
         SearchProfile p = searchProfileRepository.findById(searchProfileId).orElseThrow();
 //TODO add all fields
         return p.getFavoritePlayers().stream()
-                .map(pl -> new PlayerControler.PlayerVO(pl.getFullName(), 0, 12))
+                .map(pl -> new ShortListPlayerVo(pl.getFullName(), pl.getShortName(), pl.getId(), pl.getTeam().getName(), pl.getBirthdate().toString()))
                 .toList();
     }
 
+    public record ShortListPlayerVo(String name, String short_name, Long player_id, String team_name, String birthdate) {}
 
     @GetMapping
     public List<SearchProfileRecord> findAll() {

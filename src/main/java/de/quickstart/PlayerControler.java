@@ -3,6 +3,9 @@ package de.quickstart;
 import java.time.LocalDate;
 import java.util.List;
 
+import de.quickstart.models.PlayerPerformance;
+import de.quickstart.repos.MatchPerformanceRepository;
+import de.quickstart.repos.PlayerPerformanceRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -16,7 +19,7 @@ public class PlayerControler {
 
     private final PlayerRepository playerRepo;
     private final TransfermarktImport importer;
-    private final MatchPerformance performance;
+    private final PlayerPerformanceRepository performanceRepository;
 
     public List<PlayerVO> getPlayers() {
 
@@ -26,6 +29,7 @@ public class PlayerControler {
                     .stream()
                     .map(player -> {
                         var result = importer.getPlayerMarketValue(player.getFullName());
+                        PlayerPerformance performance = performanceRepository.findById(player.getId()).orElseThrow();
 
                         return new PlayerVO(
                                 player.getFullName(),
@@ -39,31 +43,27 @@ public class PlayerControler {
                                 result.imgurl(),
 
                                 // --- MatchPerformance-Werte ---
-                                performance.getMinutes(),
-                                performance.getPhysicalCheckPassed(),
-                                performance.getDistance(),
-                                performance.getMetersPerMinute(),
-                                performance.getRunningDistance(),
-                                performance.getHsrDistance(),
-                                performance.getHsrCount(),
-                                performance.getSprintDistance(),
-                                performance.getSprintCount(),
-                                performance.getHiDistance(),
-                                performance.getHiCount(),
-                                performance.getPsv99(),
-                                performance.getMediumAccelerationCount(),
-                                performance.getHighAccelerationCount(),
-                                performance.getMediumDecelerationCount(),
-                                performance.getHighDecelerationCount(),
-                                performance.getExplosiveAccToHsrCount(),
-                                performance.getTimeToHsr(),
-                                performance.getTimeToHsrPostCod(),
-                                performance.getExplosiveAccToSprintCount(),
-                                performance.getTimeToSprint(),
-                                performance.getTimeToSprintPostCod(),
-                                performance.getChangeOfDirectionCount(),
-                                performance.getTimeTo505Around90(),
-                                performance.getTimeTo505Around180()
+                                performance.getTotalMinutes(),
+                                performance.getTotalDistance(),
+                                performance.getTotalMetersPerMin(),
+                                performance.getTotalRunningDistance(),
+                                performance.getTotalHsrDistance(),
+                                performance.getTotalHsrCount(),
+                                performance.getTotalSprintDistance(),
+                                performance.getTotalSprintCount(),
+                                performance.getTotalHiDistance(),
+                                performance.getTotalHiCount(),
+                                performance.getTotalPsv99(),
+                                performance.getTotalMediumAccCount(),
+                                performance.getTotalHighAccCount(),
+                                performance.getTotalMediumDecCount(),
+                                performance.getTotalHighDecCount(),
+                                performance.getTotalExplAccToHsrCount(),
+                                performance.getTotalTimeToHsr(),
+                                performance.getTotalTimeToHsrPostCod(),
+                                performance.getTotalExplAccToSprintCount(),
+                                performance.getTotalTimeToSprint(),
+                                performance.getTotalTimeToSprintPostCod()
                         );
                     })
                     .toList();
@@ -86,8 +86,7 @@ public class PlayerControler {
             String imgurl,
 
             // MatchPerformance-Felder
-            Integer minutes,
-            Boolean physicalCheckPassed,
+            Double minutes,
             Double distance,
             Double metersPerMinute,
             Double runningDistance,
@@ -107,10 +106,7 @@ public class PlayerControler {
             Double timeToHsrPostCod,
             Integer explosiveAccToSprintCount,
             Double timeToSprint,
-            Double timeToSprintPostCod,
-            Integer changeOfDirectionCount,
-            Double timeTo505Around90,
-            Double timeTo505Around180
+            Double timeToSprintPostCod
     ) {}
 
 }
