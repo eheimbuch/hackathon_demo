@@ -19,6 +19,7 @@ public class Player {
     @Column(name = "short_name")
     private String shortName;
 
+    @Column(name = "name")
     private String fullName;
 
     private LocalDate birthdate;

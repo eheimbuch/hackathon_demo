@@ -15,6 +15,7 @@ public class Position {
     @Id
     private Long id;
 
+    @Column(name = "name")
     private String name;
 
     @Column(name = "position_group")

@@ -35,6 +35,10 @@ dependencies {
 	// persistence
 	implementation 'org.postgresql:postgresql:42.7.4'
 
+    // excel
+    implementation 'org.apache.poi:poi:5.2.5'
+    implementation 'org.apache.poi:poi-ooxml:5.2.5'
+
 	// testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

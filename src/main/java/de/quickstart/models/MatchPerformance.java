@@ -29,6 +29,9 @@ public class MatchPerformance {
     @JoinColumn(name = "position_id")
     private Position position;
 
+    @ManyToOne
+    private CompetitionEdition competitionEdition;
+
     // Basisfelder
     private Integer minutes;
 
@@ -102,8 +105,4 @@ public class MatchPerformance {
 
     @Column(name = "time_to_505_around_180")
     private Double timeTo505Around180;
-
-    // zusätzliche Convenience-Felder (können weggelassen werden)
-    @Column(name = "position_group")
-    private String positionGroupSnapshot; // damit CSV-Spalte "Position Group" erhalten bleibt
 }
