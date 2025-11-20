@@ -1,8 +1,8 @@
 package de.quickstart;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URI;
@@ -12,8 +12,6 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
 
-import org.springframework.stereotype.Service;
-
 @Service
 public class TransfermarktImport {
 
@@ -21,57 +19,122 @@ public class TransfermarktImport {
     private static final HttpClient HTTP_CLIENT = HttpClient.newHttpClient();
     private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
-    
-    // 2) PlayerID -> Marktwert (deine Funktion, leicht aufgeräumt)
-     public long getPlayerMarketValue(String name) {
+    // Ergebnis inkl. Spieler-ID und Bild-URL
+    public record TransferResult(long marketValue,
+                                 int age,
+                                 String nationality,
+                                 String id,
+                                 String imgurl) { }
 
-        String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+    /**
+     * 1) Spieler per Name suchen: /players/search/{name}
+     *    -> marketValue, age, nationality, id
+     * 2) Mit dieser id Profil holen: /players/{player_id}/profile
+     *    -> imageUrl
+     */
+    public TransferResult getPlayerMarketValue(String name) {
+        try {
+            String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
+            String url = BASE_URL + "/players/search/" + encodedName;
 
-        String url = BASE_URL + "/players/search/" + encodedName;
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .header("Accept", "application/json")
+                    .build();
 
+            HttpResponse<String> response =
+                    HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
 
-        HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(url))
-                .GET()
-                .header("Accept", "application/json")
-                .build();
+            if (response.statusCode() != 200) {
+                throw new RuntimeException(
+                        "API-Fehler bei /players/search/{name}: HTTP "
+                                + response.statusCode() + " – " + response.body());
+            }
 
-         HttpResponse<String> response =
-                 null;
-         try {
-             response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
-         } catch (Exception e) {
-             throw new RuntimeException(e);
-         }
+            JsonNode root = OBJECT_MAPPER.readTree(response.body());
+            JsonNode results = root.path("results");
 
-         if (response.statusCode() != 200) {
-            throw new RuntimeException(
-                    "API-Fehler bei /players/{id}/market_value: HTTP "
-                            + response.statusCode() + " – " + response.body());
+            if (!results.isArray() || results.isEmpty()) {
+                throw new RuntimeException("Keine Ergebnisse gefunden: " + response.body());
+            }
+
+            JsonNode firstResult = results.get(0);
+
+            // marketValue
+            JsonNode marketValueNode = firstResult.path("marketValue");
+            if (marketValueNode.isMissingNode() || !marketValueNode.isNumber()) {
+                throw new RuntimeException("marketValue nicht in der Antwort gefunden: " + response.body());
+            }
+            long marketValue = marketValueNode.asLong();
+
+            // age
+            int age = firstResult.path("age").asInt();
+
+            // nationality (erste Nationalität)
+            JsonNode nationalitiesNode = firstResult.path("nationalities");
+            String firstNationality = null;
+            if (nationalitiesNode.isArray() && nationalitiesNode.size() > 0) {
+                firstNationality = nationalitiesNode.get(0).asText();
+            }
+
+            // Spieler-ID
+            JsonNode idNode = firstResult.path("id");
+            if (idNode.isMissingNode()) {
+                throw new RuntimeException("id nicht in der Antwort gefunden: " + response.body());
+            }
+            String playerId = idNode.asText();
+
+            // Bild-URL über zweite Funktion holen
+            String imageUrl = getPlayerImageUrl(playerId);
+
+            return new TransferResult(marketValue, age, firstNationality, playerId, imageUrl);
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("HTTP-Request unterbrochen", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Fehler bei HTTP-Request oder JSON-Verarbeitung", e);
         }
-
-         JsonNode root = null;
-         try {
-             root = OBJECT_MAPPER.readTree(response.body());
-         } catch (Exception e) {
-             throw new RuntimeException(e);
-         }
-         JsonNode results = root.path("results");
-        
-        if (!results.isArray() || results.isEmpty()) {
-            throw new RuntimeException("Keine Ergebnisse gefunden: " + response.body());
-        }
-        
-        JsonNode firstResult = results.get(0);
-        JsonNode marketValueNode = firstResult.path("marketValue");
-        
-        if (marketValueNode.isMissingNode() || !marketValueNode.isNumber()) {
-            throw new RuntimeException("marketValue nicht in der Antwort gefunden: " + response.body());
-        }
-        
-        long value = marketValueNode.asLong();
-        return value;
-        
     }
 
+    /**
+     * Zweite Funktion:
+     * Ruft /players/{player_id}/profile auf und extrahiert imageUrl.
+     */
+    public String getPlayerImageUrl(String playerId) {
+        try {
+            String url = BASE_URL + "/players/" + playerId + "/profile";
+
+            HttpRequest request = HttpRequest.newBuilder()
+                    .uri(URI.create(url))
+                    .GET()
+                    .header("Accept", "application/json")
+                    .build();
+
+            HttpResponse<String> response =
+                    HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+
+            if (response.statusCode() != 200) {
+                throw new RuntimeException(
+                        "API-Fehler bei /players/{player_id}/profile: HTTP "
+                                + response.statusCode() + " – " + response.body());
+            }
+
+            JsonNode root = OBJECT_MAPPER.readTree(response.body());
+
+            JsonNode imageUrlNode = root.path("imageUrl");
+            if (imageUrlNode.isMissingNode() || !imageUrlNode.isTextual()) {
+                throw new RuntimeException("imageUrl nicht in der Antwort gefunden: " + response.body());
+            }
+
+            return imageUrlNode.asText();
+
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException("HTTP-Request unterbrochen", e);
+        } catch (IOException e) {
+            throw new RuntimeException("Fehler bei HTTP-Request oder JSON-Verarbeitung", e);
+        }
+    }
 }
