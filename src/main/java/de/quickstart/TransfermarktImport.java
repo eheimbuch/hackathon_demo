@@ -1,5 +1,6 @@
 package de.quickstart;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -22,7 +23,7 @@ public class TransfermarktImport {
 
     
     // 2) PlayerID -> Marktwert (deine Funktion, leicht aufgeräumt)
-     public long getPlayerMarketValue(String name) throws IOException, InterruptedException {
+     public long getPlayerMarketValue(String name) {
 
         String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
 
@@ -35,17 +36,27 @@ public class TransfermarktImport {
                 .header("Accept", "application/json")
                 .build();
 
-        HttpResponse<String> response =
-                HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+         HttpResponse<String> response =
+                 null;
+         try {
+             response = HTTP_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
+         } catch (Exception e) {
+             throw new RuntimeException(e);
+         }
 
-        if (response.statusCode() != 200) {
+         if (response.statusCode() != 200) {
             throw new RuntimeException(
                     "API-Fehler bei /players/{id}/market_value: HTTP "
                             + response.statusCode() + " – " + response.body());
         }
 
-        JsonNode root = OBJECT_MAPPER.readTree(response.body());
-        JsonNode results = root.path("results");
+         JsonNode root = null;
+         try {
+             root = OBJECT_MAPPER.readTree(response.body());
+         } catch (Exception e) {
+             throw new RuntimeException(e);
+         }
+         JsonNode results = root.path("results");
         
         if (!results.isArray() || results.isEmpty()) {
             throw new RuntimeException("Keine Ergebnisse gefunden: " + response.body());

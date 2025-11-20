@@ -1,11 +1,10 @@
-package de.quickstart.models;
+package de.quickstart;
 
-import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.web.bind.annotation.RestController;
 
-import de.quickstart.TransfermarktImport;
 import de.quickstart.repos.PlayerRepository;
 import lombok.AllArgsConstructor;
 
@@ -19,7 +18,16 @@ public class PlayerControler {
     public List<PlayerVO> getPlayers(){
 
         try{
-            return playerRepo.findAll().stream().map(player -> new PlayerVO(player.getFullName(), importer.getPlayerMarketValue(player.getFullName()))).toList();
+            return playerRepo.findAll()
+                    //TODO find only relevant players
+
+                    .stream()
+                    .map(player ->  {
+                        long marketValue = importer.getPlayerMarketValue(player.getFullName());
+
+                        return new PlayerVO(player.getFullName(), marketValue, 12 );
+                    })
+                    .toList();
         }catch(Exception e){
             System.err.println(e);
             return List.of();
@@ -27,7 +35,7 @@ public class PlayerControler {
         
 
     }
-    public record PlayerVO(String name, long markvalue) {
+    public record PlayerVO(String name, long marketvalue,  int age) {
        
     }
 
