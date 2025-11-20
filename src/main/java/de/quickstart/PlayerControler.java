@@ -3,10 +3,14 @@ package de.quickstart;
 import java.time.LocalDate;
 import java.util.List;
 
+import de.quickstart.models.Player;
 import de.quickstart.models.PlayerPerformance;
 import de.quickstart.repos.MatchPerformanceRepository;
 import de.quickstart.repos.PlayerPerformanceRepository;
+import org.springframework.data.domain.Example;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.quickstart.models.MatchPerformance;
@@ -72,6 +76,67 @@ public class PlayerControler {
             return List.of();
         }
 
+    }
+
+    @GetMapping("/api/players/by-name/{name}")
+    public PlayerVO getPlayerByName(@PathVariable String name) {
+        try {
+            // Probe-Objekt
+            Player probe = new Player();
+            probe.setFullName(name);
+
+            // Matcher für Teilstring (contains, ignore case)
+            ExampleMatcher matcher = ExampleMatcher.matching()
+                    .withMatcher("fullName", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase());
+
+            Example<Player> example = Example.of(probe, matcher);
+
+            Player player = playerRepo.findOne(example)
+                    .orElseThrow(() -> new RuntimeException("Player not found containing: " + name));
+
+            PlayerPerformance performance = performanceRepository.findById(player.getId())
+                    .orElseThrow(() -> new RuntimeException("Performance not found for player: " + player.getFullName()));
+
+            var result = importer.getPlayerMarketValue(player.getFullName());
+
+            return new PlayerVO(
+                    player.getFullName(),
+                    player.getShortName(),
+                    player.getTeam() != null ? player.getTeam().getName() : null,
+                    player.getBirthdate(),
+                    player.getId(),
+                    result.marketValue(),
+                    result.age(),
+                    result.nationality(),
+                    result.imgurl(),
+
+                    performance.getTotalMinutes(),
+                    performance.getTotalDistance(),
+                    performance.getTotalMetersPerMin(),
+                    performance.getTotalRunningDistance(),
+                    performance.getTotalHsrDistance(),
+                    performance.getTotalHsrCount(),
+                    performance.getTotalSprintDistance(),
+                    performance.getTotalSprintCount(),
+                    performance.getTotalHiDistance(),
+                    performance.getTotalHiCount(),
+                    performance.getTotalPsv99(),
+                    performance.getTotalMediumAccCount(),
+                    performance.getTotalHighAccCount(),
+                    performance.getTotalMediumDecCount(),
+                    performance.getTotalHighDecCount(),
+                    performance.getTotalExplAccToHsrCount(),
+                    performance.getTotalTimeToHsr(),
+                    performance.getTotalTimeToHsrPostCod(),
+                    performance.getTotalExplAccToSprintCount(),
+                    performance.getTotalTimeToSprint(),
+                    performance.getTotalTimeToSprintPostCod()
+            );
+
+        } catch (Exception e) {
+            System.err.println(e);
+            return null;
+        }
     }
 
     @GetMapping("/api/players/similar/{id}")
