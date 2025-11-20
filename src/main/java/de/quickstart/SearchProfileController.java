@@ -60,7 +60,7 @@ public class SearchProfileController {
     @GetMapping("{search_profile_id}/players")
     public List<PlayerControler.PlayerVO> getShortList(@PathVariable("search_profile_id") Long searchProfileId) {
         SearchProfile p = searchProfileRepository.findById(searchProfileId).orElseThrow();
-
+//TODO add all fields
         return p.getFavoritePlayers().stream()
                 .map(pl -> new PlayerControler.PlayerVO(pl.getFullName(), 0, 12))
                 .toList();
@@ -153,7 +153,8 @@ public class SearchProfileController {
 
             Double minTimeTo505Around180,
             Double maxTimeTo505Around180
-    ) {}
+    ) {
+    }
 
     public record SearchProfileRecord(
             Long id,
@@ -163,5 +164,6 @@ public class SearchProfileController {
             Integer minAge,
             Integer maxAge,
             PerformanceFiltersRecord performanceFilters
-    ) {}
+    ) {
+    }
 }
