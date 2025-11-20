@@ -13,15 +13,15 @@ public class MatchPerformance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "player_id")
     private Player player;
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team; // Team des Spielers in diesem Match
 
-    @ManyToOne(optional = false)
+    @ManyToOne
     @JoinColumn(name = "match_id")
     private Match match;
 

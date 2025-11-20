@@ -19,6 +19,4 @@ public class CompetitionEdition {
     @ManyToOne
     @JoinColumn(name = "season_id")
     private Season season;
-
-    private String name;
 }

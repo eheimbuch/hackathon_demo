@@ -24,7 +24,7 @@ public class Player {
 
     private LocalDate birthdate;
 
-    @ManyToOne(optional = true)
+    @ManyToOne
     @JoinColumn(name = "team_id")
     private Team team;
 
