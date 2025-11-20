@@ -22,6 +22,9 @@ public class Player {
     @Column(name = "name")
     private String fullName;
 
+    @Column(name = "name")
+    private long marketValue;
+
     private LocalDate birthdate;
 
     @ManyToOne
