@@ -3,6 +3,7 @@ package de.quickstart;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.quickstart.repos.PlayerRepository;
@@ -15,6 +16,7 @@ public class PlayerControler {
     private final PlayerRepository playerRepo;
     private final TransfermarktImport importer;
 
+    @GetMapping("/")
     public List<PlayerVO> getPlayers(){
 
         try{

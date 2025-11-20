@@ -57,12 +57,13 @@ public class SearchProfileController {
         playerRepository.flush();
     }
 
-    @DeleteMapping("/{search_profile_id}/players/{player_id}")
-    public void removeFavorite(@PathVariable("search_profile_id") Long searchProfileId, @PathVariable("player_id") Long playerId) {
+    @GetMapping("{search_profile_id}/players")
+    public List<PlayerControler.PlayerVO> getShortList(@PathVariable("search_profile_id") Long searchProfileId) {
         SearchProfile p = searchProfileRepository.findById(searchProfileId).orElseThrow();
-        Player player = playerRepository.findById(playerId).orElseThrow();
-        p.getFavoritePlayers().add(player);
-        playerRepository.flush();
+
+        return p.getFavoritePlayers().stream()
+                .map(pl -> new PlayerControler.PlayerVO(pl.getFullName(), 0, 12))
+                .toList();
     }
 
 
