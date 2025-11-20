@@ -21,4 +21,4 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 logging:
   level:
-    root: info
+    root: debug

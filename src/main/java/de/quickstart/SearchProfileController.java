@@ -50,7 +50,7 @@ public class SearchProfileController {
         return searchProfile;
     }
 
-    @PutMapping("/{search_profile_id}/players/{player_id}")
+    @PostMapping("/{search_profile_id}/players/{player_id}")
     public void addFavorite(@PathVariable("search_profile_id") Long searchProfileId, @PathVariable("player_id") Long playerId) {
         SearchProfile p = searchProfileRepository.findById(searchProfileId).orElseThrow();
         Player player = playerRepository.findById(playerId).orElseThrow();
