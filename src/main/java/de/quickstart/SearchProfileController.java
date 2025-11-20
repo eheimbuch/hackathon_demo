@@ -1,6 +1,8 @@
 package de.quickstart;
 
+import de.quickstart.models.Player;
 import de.quickstart.models.SearchProfile;
+import de.quickstart.repos.PlayerRepository;
 import de.quickstart.repos.SearchProfileRepository;
 import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
@@ -14,6 +16,7 @@ import java.util.List;
 public class SearchProfileController {
 
     private final SearchProfileRepository searchProfileRepository;
+    private final PlayerRepository playerRepository;
 
     @PostMapping
     public void create(@RequestBody SearchProfileRecord searchProfile) {
@@ -24,13 +27,15 @@ public class SearchProfileController {
                 searchProfile.positionGroup(),
                 searchProfile.minAge(),
                 searchProfile.maxAge(),
+                List.of(),
                 PerformanceFiltersMapper.toEntity(searchProfile.performanceFilters())
         );
         searchProfileRepository.save(profile);
+        searchProfileRepository.flush();
     }
 
     @PutMapping("/{id}")
-    public void update(@PathParam("id") Long id, @RequestBody SearchProfileRecord searchProfile) {
+    public SearchProfileRecord update(@PathParam("id") Long id, @RequestBody SearchProfileRecord searchProfile) {
         SearchProfile p = searchProfileRepository.findById(id).orElseThrow();
         p.setName(searchProfile.name());
         p.setPosition(searchProfile.position());
@@ -39,7 +44,27 @@ public class SearchProfileController {
         p.setMaxAge(searchProfile.maxAge());
         p.setPerformanceFilters(PerformanceFiltersMapper.toEntity(searchProfile.performanceFilters()));
         searchProfileRepository.save(p);
+        searchProfileRepository.flush();
+
+        return searchProfile;
     }
+
+    @PutMapping("/{search_profile_id}/players/{player_id}")
+    public void addFavorite(@PathVariable("search_profile_id") Long searchProfileId, @PathVariable("player_id") Long playerId) {
+        SearchProfile p = searchProfileRepository.findById(searchProfileId).orElseThrow();
+        Player player = playerRepository.findById(playerId).orElseThrow();
+        p.getFavoritePlayers().add(player);
+        playerRepository.flush();
+    }
+
+    @DeleteMapping("/{search_profile_id}/players/{player_id}")
+    public void removeFavorite(@PathVariable("search_profile_id") Long searchProfileId, @PathVariable("player_id") Long playerId) {
+        SearchProfile p = searchProfileRepository.findById(searchProfileId).orElseThrow();
+        Player player = playerRepository.findById(playerId).orElseThrow();
+        p.getFavoritePlayers().add(player);
+        playerRepository.flush();
+    }
+
 
     @GetMapping
     public List<SearchProfileRecord> findAll() {

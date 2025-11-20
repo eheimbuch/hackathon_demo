@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "search_profiles")
 @Getter
@@ -30,6 +33,9 @@ public class SearchProfile {
 
     @Column(name = "max_age")
     private Integer maxAge;
+
+    @ManyToMany
+    private List<Player> favoritePlayers = new ArrayList<>();
 
     @Embedded
     private PerformanceFilters performanceFilters;
