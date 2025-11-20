@@ -1,6 +1,0 @@
-liquibase:
-  url: jdbc:postgresql://localhost:5432/quickstart
-  username: deerstone
-  password: quickstart_pw
-  driver: org.postgresql.Driver
-  changeLogFile: src/main/resources/db/changelog/initial_schema.yml
