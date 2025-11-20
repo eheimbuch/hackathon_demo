@@ -26,9 +26,7 @@ public class PlayerControler {
 
         try {
             return playerRepo.findAll()
-                    // TODO find only relevant players
                     .stream()
-                    .limit(10)
                     .map(player -> {
                         var result = importer.getPlayerMarketValue(player.getFullName());
                         PlayerPerformance performance = performanceRepository.findById(player.getId()).orElseThrow();
@@ -75,6 +73,63 @@ public class PlayerControler {
         }
 
     }
+
+    @GetMapping("/api/players/similar/{id}")
+    public List<PlayerVO> getPlayers(String id) {
+
+        List<Long> similarPlayers = playerRepo.findSimilar(id);
+
+        try {
+            return playerRepo.findAll()
+                    .stream()
+                    .filter(p -> similarPlayers.contains(p.getId()))
+                    .map(player -> {
+                        var result = importer.getPlayerMarketValue(player.getFullName());
+                        PlayerPerformance performance = performanceRepository.findById(player.getId()).orElseThrow();
+
+                        return new PlayerVO(
+                                player.getFullName(),
+                                player.getShortName(),
+                                player.getTeam() != null ? player.getTeam().getName() : null,
+                                player.getBirthdate(),
+                                player.getId(),
+                                result.marketValue(),
+                                result.age(),
+                                result.nationality(),
+                                result.imgurl(),
+
+                                // --- MatchPerformance-Werte ---
+                                performance.getTotalMinutes(),
+                                performance.getTotalDistance(),
+                                performance.getTotalMetersPerMin(),
+                                performance.getTotalRunningDistance(),
+                                performance.getTotalHsrDistance(),
+                                performance.getTotalHsrCount(),
+                                performance.getTotalSprintDistance(),
+                                performance.getTotalSprintCount(),
+                                performance.getTotalHiDistance(),
+                                performance.getTotalHiCount(),
+                                performance.getTotalPsv99(),
+                                performance.getTotalMediumAccCount(),
+                                performance.getTotalHighAccCount(),
+                                performance.getTotalMediumDecCount(),
+                                performance.getTotalHighDecCount(),
+                                performance.getTotalExplAccToHsrCount(),
+                                performance.getTotalTimeToHsr(),
+                                performance.getTotalTimeToHsrPostCod(),
+                                performance.getTotalExplAccToSprintCount(),
+                                performance.getTotalTimeToSprint(),
+                                performance.getTotalTimeToSprintPostCod()
+                        );
+                    })
+                    .toList();
+        } catch (Exception e) {
+            System.err.println(e);
+            return List.of();
+        }
+
+    }
+
 
     public record PlayerVO(
             String name,
