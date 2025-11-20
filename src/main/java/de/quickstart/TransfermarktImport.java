@@ -56,7 +56,7 @@ public class TransfermarktImport {
             JsonNode results = root.path("results");
 
             if (!results.isArray() || results.isEmpty()) {
-                throw new RuntimeException("Keine Ergebnisse gefunden: " + response.body());
+                return new TransferResult(0, 18, null, null, null);
             }
 
             JsonNode firstResult = results.get(0);
@@ -64,7 +64,7 @@ public class TransfermarktImport {
             // marketValue
             JsonNode marketValueNode = firstResult.path("marketValue");
             if (marketValueNode.isMissingNode() || !marketValueNode.isNumber()) {
-                throw new RuntimeException("marketValue nicht in der Antwort gefunden: " + response.body());
+                return new TransferResult(0, 18, null, null, null);
             }
             long marketValue = marketValueNode.asLong();
 

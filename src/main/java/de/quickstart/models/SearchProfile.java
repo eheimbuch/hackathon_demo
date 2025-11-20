@@ -13,9 +13,15 @@ import java.util.List;
 @Table(name = "search_profiles")
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 public class SearchProfile {
+    public SearchProfile(String name, String position, String positionGroup, Integer minAge, Integer maxAge) {
+        this.name = name;
+        this.position = position;
+        this.positionGroup = positionGroup;
+        this.minAge = minAge;
+        this.maxAge = maxAge;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

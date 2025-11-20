@@ -16,7 +16,7 @@ public class PerformanceFilters {
     @Column(name = "max_distance")
     private Double maxDistance;
 
-    @Column(name = "distance_weight", nullable = false)
+    @Column(name = "distance_weight")
     private Double distanceWeight = 1.0;
 
     @Column(name = "min_m_per_min")
@@ -25,7 +25,7 @@ public class PerformanceFilters {
     @Column(name = "max_m_per_min")
     private Double maxMPerMin;
 
-    @Column(name = "m_per_min_weight", nullable = false)
+    @Column(name = "m_per_min_weight")
     private Double mPerMinWeight = 1.0;
 
     @Column(name = "min_running_distance")
@@ -34,7 +34,7 @@ public class PerformanceFilters {
     @Column(name = "max_running_distance")
     private Double maxRunningDistance;
 
-    @Column(name = "running_distance_weight", nullable = false)
+    @Column(name = "running_distance_weight")
     private Double runningDistanceWeight = 1.0;
 
     @Column(name = "min_hsr_distance")
@@ -43,7 +43,7 @@ public class PerformanceFilters {
     @Column(name = "max_hsr_distance")
     private Double maxHsrDistance;
 
-    @Column(name = "hsr_distance_weight", nullable = false)
+    @Column(name = "hsr_distance_weight")
     private Double hsrDistanceWeight = 1.0;
 
     @Column(name = "min_hsr_count")
@@ -52,7 +52,7 @@ public class PerformanceFilters {
     @Column(name = "max_hsr_count")
     private Integer maxHsrCount;
 
-    @Column(name = "hsr_count_weight", nullable = false)
+    @Column(name = "hsr_count_weight")
     private Double hsrCountWeight = 1.0;
 
     @Column(name = "min_sprint_distance")
@@ -61,7 +61,7 @@ public class PerformanceFilters {
     @Column(name = "max_sprint_distance")
     private Double maxSprintDistance;
 
-    @Column(name = "sprint_distance_weight", nullable = false)
+    @Column(name = "sprint_distance_weight")
     private Double sprintDistanceWeight = 1.0;
 
     @Column(name = "min_sprint_count")
@@ -70,7 +70,7 @@ public class PerformanceFilters {
     @Column(name = "max_sprint_count")
     private Integer maxSprintCount;
 
-    @Column(name = "sprint_count_weight", nullable = false)
+    @Column(name = "sprint_count_weight")
     private Double sprintCountWeight = 1.0;
 
     @Column(name = "min_hi_distance")
@@ -79,7 +79,7 @@ public class PerformanceFilters {
     @Column(name = "max_hi_distance")
     private Double maxHiDistance;
 
-    @Column(name = "hi_distance_weight", nullable = false)
+    @Column(name = "hi_distance_weight")
     private Double hiDistanceWeight = 1.0;
 
     @Column(name = "min_hi_count")
@@ -88,7 +88,7 @@ public class PerformanceFilters {
     @Column(name = "max_hi_count")
     private Integer maxHiCount;
 
-    @Column(name = "hi_count_weight", nullable = false)
+    @Column(name = "hi_count_weight")
     private Double hiCountWeight = 1.0;
 
     @Column(name = "min_psv_99")
@@ -97,7 +97,7 @@ public class PerformanceFilters {
     @Column(name = "max_psv_99")
     private Double maxPsv99;
 
-    @Column(name = "psv_99_weight", nullable = false)
+    @Column(name = "psv_99_weight")
     private Double psv99Weight = 1.0;
 
     @Column(name = "min_medium_acceleration_count")

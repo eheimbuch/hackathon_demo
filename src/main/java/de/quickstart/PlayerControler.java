@@ -21,12 +21,14 @@ public class PlayerControler {
     private final TransfermarktImport importer;
     private final PlayerPerformanceRepository performanceRepository;
 
+    @GetMapping("/api/players/")
     public List<PlayerVO> getPlayers() {
 
         try {
             return playerRepo.findAll()
                     // TODO find only relevant players
                     .stream()
+                    .limit(10)
                     .map(player -> {
                         var result = importer.getPlayerMarketValue(player.getFullName());
                         PlayerPerformance performance = performanceRepository.findById(player.getId()).orElseThrow();

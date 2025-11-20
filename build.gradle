@@ -40,9 +40,10 @@ dependencies {
     implementation "com.github.pjfanning:poi-shared-strings:2.9.2"
     implementation 'org.apache.poi:poi-ooxml:5.4.1'
     implementation 'com.github.pjfanning:excel-streaming-reader:5.1.1'
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
 
 
-	// testing
+    // testing
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 

@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping(name = "api/search-profiles")
+@RequestMapping("/api/search-profiles/")
 @AllArgsConstructor
 public class SearchProfileController {
 
@@ -20,19 +20,19 @@ public class SearchProfileController {
     private final PlayerRepository playerRepository;
 
     @PostMapping
-    public void create(@RequestBody SearchProfileRecord searchProfile) {
+    public SearchProfile create(@RequestBody SearchProfileRecord searchProfile) {
+
         SearchProfile profile = new SearchProfile(
-                null,
                 searchProfile.name(),
                 searchProfile.position(),
                 searchProfile.positionGroup(),
                 searchProfile.minAge(),
-                searchProfile.maxAge(),
-                List.of(),
-                PerformanceFiltersMapper.toEntity(searchProfile.performanceFilters())
+                searchProfile.maxAge()
         );
-        searchProfileRepository.save(profile);
+        SearchProfile searchProfileRecord = searchProfileRepository.save(profile);
         searchProfileRepository.flush();
+
+        return searchProfileRecord;
     }
 
     @PutMapping("/{id}")
@@ -61,7 +61,7 @@ public class SearchProfileController {
     @GetMapping("{search_profile_id}/players")
     public List<ShortListPlayerVo> getShortList(@PathVariable("search_profile_id") Long searchProfileId) {
         SearchProfile p = searchProfileRepository.findById(searchProfileId).orElseThrow();
-//TODO add all fields
+        //TODO add all fields
         return p.getFavoritePlayers().stream()
                 .map(pl -> new ShortListPlayerVo(pl.getFullName(), pl.getShortName(), pl.getId(), pl.getTeam().getName(), pl.getBirthdate().toString()))
                 .toList();
