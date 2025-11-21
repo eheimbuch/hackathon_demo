@@ -29,8 +29,9 @@ public class PlayerControler {
     public List<PlayerVO> getPlayers() {
 
         try {
-            return playerRepo.findAll()
+            var resulttt =  playerRepo.findAll()
                     .stream()
+                    .limit(10)
                     .map(player -> {
                         var result = importer.getPlayerMarketValue(player.getFullName());
                         PlayerPerformance performance = performanceRepository.findById(player.getId()).orElseThrow();
@@ -57,7 +58,7 @@ public class PlayerControler {
                                 performance.getTotalSprintCount(),
                                 performance.getTotalHiDistance(),
                                 performance.getTotalHiCount(),
-                                performance.getTotalPsv99(),
+                                performance.getTotalPsv_99(),
                                 performance.getTotalMediumAccCount(),
                                 performance.getTotalHighAccCount(),
                                 performance.getTotalMediumDecCount(),
@@ -71,6 +72,8 @@ public class PlayerControler {
                         );
                     })
                     .toList();
+
+            return resulttt;
         } catch (Exception e) {
             System.err.println(e);
             return List.of();
@@ -120,7 +123,7 @@ public class PlayerControler {
                     performance.getTotalSprintCount(),
                     performance.getTotalHiDistance(),
                     performance.getTotalHiCount(),
-                    performance.getTotalPsv99(),
+                    performance.getTotalPsv_99(),
                     performance.getTotalMediumAccCount(),
                     performance.getTotalHighAccCount(),
                     performance.getTotalMediumDecCount(),
@@ -174,7 +177,7 @@ public class PlayerControler {
                                 performance.getTotalSprintCount(),
                                 performance.getTotalHiDistance(),
                                 performance.getTotalHiCount(),
-                                performance.getTotalPsv99(),
+                                performance.getTotalPsv_99(),
                                 performance.getTotalMediumAccCount(),
                                 performance.getTotalHighAccCount(),
                                 performance.getTotalMediumDecCount(),

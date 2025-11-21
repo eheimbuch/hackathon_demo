@@ -30,7 +30,7 @@ public class PlayerPerformance {
     private Integer totalSprintCount;
     private Double totalHiDistance;
     private Integer totalHiCount;
-    private Double totalPsv99;
+    private Double totalPsv_99;
     private Integer totalMediumAccCount;
     private Integer totalHighAccCount;
     private Integer totalMediumDecCount;
@@ -42,6 +42,6 @@ public class PlayerPerformance {
     private Double totalTimeToSprint;
     private Double totalTimeToSprintPostCod;
     private Integer totalCodCount;
-    private Double totalTimeTo505_90;
-    private Double totalTimeTo505_180;
+    private Double totalTimeTo_505_90;
+    private Double totalTimeTo_505_180;
 }
