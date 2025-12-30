@@ -1,6 +1,7 @@
 server:
   tomcat:
     apr-enabled: false
+  port: 8080
 spring:
   application:
     name: quickstart
@@ -21,4 +22,4 @@ spring:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
 logging:
   level:
-    root: debug
+    root: info

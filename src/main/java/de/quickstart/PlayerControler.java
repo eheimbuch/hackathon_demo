@@ -7,6 +7,7 @@ import de.quickstart.models.Player;
 import de.quickstart.models.PlayerPerformance;
 import de.quickstart.repos.MatchPerformanceRepository;
 import de.quickstart.repos.PlayerPerformanceRepository;
+import jakarta.websocket.server.PathParam;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -58,7 +59,7 @@ public class PlayerControler {
                                 performance.getTotalSprintCount(),
                                 performance.getTotalHiDistance(),
                                 performance.getTotalHiCount(),
-                                performance.getTotalPsv_99(),
+                                performance.getTotalPsv99(),
                                 performance.getTotalMediumAccCount(),
                                 performance.getTotalHighAccCount(),
                                 performance.getTotalMediumDecCount(),
@@ -123,7 +124,7 @@ public class PlayerControler {
                     performance.getTotalSprintCount(),
                     performance.getTotalHiDistance(),
                     performance.getTotalHiCount(),
-                    performance.getTotalPsv_99(),
+                    performance.getTotalPsv99(),
                     performance.getTotalMediumAccCount(),
                     performance.getTotalHighAccCount(),
                     performance.getTotalMediumDecCount(),
@@ -143,16 +144,24 @@ public class PlayerControler {
     }
 
     @GetMapping("/api/players/similar/{id}")
-    public List<PlayerVO> getPlayers(String id) {
-
-        List<Long> similarPlayers = playerRepo.findSimilar(id);
+    public List<PlayerVO> getPlayers(@PathVariable("id") long id) {
 
         try {
+            List<Long> similarPlayers = playerRepo.findSimilar(
+                    id,     // reference player
+                    5,    // distance weight
+                    5,    // meters/min weight
+                    5,    // sprint distance weight
+                    5     // sprint count weight
+            );
+
             return playerRepo.findAll()
                     .stream()
                     .filter(p -> similarPlayers.contains(p.getId()))
                     .map(player -> {
+
                         var result = importer.getPlayerMarketValue(player.getFullName());
+
                         PlayerPerformance performance = performanceRepository.findById(player.getId()).orElseThrow();
 
                         return new PlayerVO(
@@ -177,7 +186,7 @@ public class PlayerControler {
                                 performance.getTotalSprintCount(),
                                 performance.getTotalHiDistance(),
                                 performance.getTotalHiCount(),
-                                performance.getTotalPsv_99(),
+                                performance.getTotalPsv99(),
                                 performance.getTotalMediumAccCount(),
                                 performance.getTotalHighAccCount(),
                                 performance.getTotalMediumDecCount(),

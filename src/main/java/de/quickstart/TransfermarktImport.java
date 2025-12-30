@@ -11,6 +11,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.Random;
 
 @Service
 public class TransfermarktImport {
@@ -125,7 +126,7 @@ public class TransfermarktImport {
 
             JsonNode imageUrlNode = root.path("imageUrl");
             if (imageUrlNode.isMissingNode() || !imageUrlNode.isTextual()) {
-                throw new RuntimeException("imageUrl nicht in der Antwort gefunden: " + response.body());
+                return "";
             }
 
             return imageUrlNode.asText();
